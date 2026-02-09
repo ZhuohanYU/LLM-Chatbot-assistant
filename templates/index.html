@@ -63,6 +63,48 @@
             align-self: flex-start;
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        .header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-button {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .header-button:hover {
+            background-color: #218838;
+        }
+
+        .header-button.clear {
+            background-color: #dc3545;
+        }
+
+        .header-button.clear:hover {
+            background-color: #c82333;
+        }
+
         .input-container {
             display: flex;
             align-items: center;
@@ -111,6 +153,13 @@
 </head>
 <body>
     <div class="chat-container">
+        <div class="header">
+            <h2>Chatbot Assistant</h2>
+            <div class="header-buttons">
+                <button class="header-button" id="export-button">📥 Export Excel</button>
+                <button class="header-button clear" id="clear-button">🗑️ Clear History</button>
+            </div>
+        </div>
         <div class="messages" id="messages"></div>
         <div class="input-container">
             <input type="text" id="message-input" placeholder="Type your message here...">
@@ -163,6 +212,32 @@
                 document.getElementById("send-button").click();
             }
         });
+
+        // Export to Excel button
+        document.getElementById("export-button").addEventListener("click", function() {
+            window.location.href = "/export_excel";
+        });
+
+        // Clear history button
+        document.getElementById("clear-button").addEventListener("click", function() {
+            if (confirm("Are you sure you want to clear all chat history? This cannot be undone.")) {
+                fetch("/clear_history", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Clear the messages display
+                    document.getElementById("messages").innerHTML = "";
+                    alert("Chat history cleared successfully!");
+                })
+                .catch(error => {
+                    console.error("Error clearing history:", error);
+                    alert("Failed to clear history.");
+                });
+            }
+        });
     </script>
 </body>
 </html>
+
